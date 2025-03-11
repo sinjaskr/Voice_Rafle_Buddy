@@ -1,28 +1,86 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Raffle Detail</ion-title>
-  </ion-toolbar>
-</ion-header>
+<!-- Sidebar -->
+<div class="offcanvas offcanvas-start" id="sidebarMenu" [ngClass]="{'show': isSidebarOpen}" data-bs-backdrop="false">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Admin Panel</h5>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="list-group sidebar-menu">
+      <li class="list-group-item">
+        <button class="btn sidebar-btn" (click)="navigateToRaffleManagement()">
+          <ion-icon name="eye-outline"></ion-icon> View Raffles
+        </button>
+      </li>
+      <li class="list-group-item">
+        <button class="btn sidebar-btn" (click)="navigateToCreateRaffle()">
+          <ion-icon name="add-circle-outline"></ion-icon> Create Raffle
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">raffleDetail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<!-- Top Bar with Sidebar Toggle -->
+<div class="top-bar">
+  <button class="btn btn-outline-primary sidebar-toggle" (click)="toggleSidebar()">
+    <ion-icon name="menu-outline"></ion-icon>
+  </button>
+  <div class="dropdown">
+    <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown">
+      <ion-icon name="person-circle-outline"></ion-icon> Admin
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><button class="dropdown-item text-danger" (click)="logout()">Logout</button></li>
+    </ul>
+  </div>
+</div>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>{{ raffle.name }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p><strong>Description:</strong> {{ raffle.description }}</p>
-      <p><strong>Category:</strong> {{ raffle.category }}</p>
-      <p><strong>Ticket Price:</strong> ${{ raffle.ticketPrice }}</p>
-      <p><strong>Start Date:</strong> {{ raffle.startDate | date }}</p>
-      <p><strong>End Date:</strong> {{ raffle.endDate | date }}</p>
-    </ion-card-content>
-  </ion-card>
-  <ion-button expand="full" color="light" (click)="updateRaffle()">Update Raffle</ion-button>
-  <ion-button expand="full" color="light" (click)="deleteRaffle()">Delete</ion-button>
+<!-- Main Content -->
+<ion-content [fullscreen]="true" class="content" padding>
+  <!-- Pre-filled Form -->
+  <form (ngSubmit)="updateRaffle()">
+    <ion-card class="centered-form">
+      <ion-card-header>
+        <ion-card-title>{{ raffle.title }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label  position="floating">Raffle Title</ion-label>
+          <ion-input [(ngModel)]="raffle.title" name="title" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Description</ion-label>
+          <ion-textarea [(ngModel)]="raffle.description" name="description" required></ion-textarea>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Category</ion-label>
+          <ion-input [(ngModel)]="raffle.category" name="category" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Ticket Price</ion-label>
+          <ion-input [(ngModel)]="raffle.price" name="ticketPrice" type="number" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Start Date</ion-label>
+          <br><br>
+          <ion-datetime [(ngModel)]="raffle.startDate" name="startDate" required></ion-datetime>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">End Date</ion-label>
+          <ion-datetime [(ngModel)]="raffle.endDate" name="endDate" required></ion-datetime>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Update and Delete Buttons -->
+    <div class="button-container">
+      <ion-button expand="block" type="submit" color="primary">Update Raffle</ion-button>
+      <ion-button expand="block" color="danger" (click)="deleteRaffle()">Delete Raffle</ion-button>
+    </div>
+
+  </form>
 </ion-content>

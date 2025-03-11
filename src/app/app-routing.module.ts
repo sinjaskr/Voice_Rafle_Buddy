@@ -12,24 +12,24 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'create-raffle',
-    loadChildren: () => import('./pages/create-raffle/create-raffle.module').then( m => m.CreateRafflePageModule)
+    path: 'login',
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then( m => m.DashboardPageModule)
   },
   {
+    path: 'create-raffle',
+    loadChildren: () => import('./pages/create-raffle/create-raffle.module').then( m => m.CreateRafflePageModule)
+  },
+  {
+    path: 'raffle-detail/:id',  // Corrected path here
+    loadChildren: () => import('./pages/raffle-detail/raffle-detail.module').then( m => m.RaffleDetailPageModule)
+  },
+  {
     path: 'forget-password',
     loadChildren: () => import('./pages/forget-password/forget-password.module').then( m => m.ForgetPasswordPageModule)
-  },
-  {
-    path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
-  },
-  {
-    path: 'raffle-detail',
-    loadChildren: () => import('./pages/raffle-detail/raffle-detail.module').then( m => m.RaffleDetailPageModule)
   },
   {
     path: 'raffle-management',

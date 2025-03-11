@@ -1,89 +1,97 @@
 import { Injectable } from '@angular/core';
-import axios from 'axios';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private apiUrl = 'http://localhost:5000/api'; 
+  private baseUrl = 'https://backendserver-euba.onrender.com/api';
 
-  constructor() { }
+  constructor(private http: HttpClient) {}
+
+  // Helper function to add authorization header
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No valid auth token found!');
+      // Optionally log out or redirect the user to the login page
+      return new HttpHeaders();  // Return empty headers if no token
+    }
+
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    });
+  }
 
   // Admin Login
-  async loginAdmin(data: any) {
-    try {
-      const response = await axios.post(`${this.apiUrl}/auth/login`, data);
-      return response.data;
-    } catch (error) {
-      console.error('Login Error:', error);
-      throw error;
-    }
+  login(email: string, password: string): Observable<any> {
+    const url = `${this.baseUrl}/auth/login`;
+    const body = { email, password };
+    console.log('Sending login request to:', url);
+    console.log('Request payload:', body);
+
+    return this.http.post(url, body).pipe(
+      tap((response: any) => {
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+          console.log('Token saved to localStorage');
+        }
+      })
+    );
   }
 
-  // Create a Raffle
-  async createRaffle(data: any) {
-    try {
-      const response = await axios.post(`${this.apiUrl}/raffles`, data);
-      return response.data;
-    } catch (error) {
-      console.error('Error creating raffle:', error);
-      throw error;
-    }
+  // Admin Register
+  register(username: string, email: string, password: string): Observable<any> {
+    const url = `${this.baseUrl}/auth/register`;
+    const body = { username, email, password };
+    return this.http.post(url, body);
   }
 
-  // Fetch all raffles
-  async getAllRaffles() {
-    try {
-      const response = await axios.get(`${this.apiUrl}/raffles`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching raffles:', error);
-      throw error;
-    }
+  // Create Raffle
+  createRaffle(raffleData: any): Observable<any> {
+    const url = `${this.baseUrl}/raffles`;
+    const headers = this.getHeaders();
+    return this.http.post(url, raffleData, { headers });
   }
 
-  // Update a Raffle
-  async updateRaffle(id: string, data: any) {
-    try {
-      const response = await axios.put(`${this.apiUrl}/raffles/${id}`, data);
-      return response.data;
-    } catch (error) {
-      console.error('Error updating raffle:', error);
-      throw error;
-    }
+  // Get All Raffles
+  getAllRaffles(): Observable<any> {
+    const url = `${this.baseUrl}/raffles`;
+    const headers = this.getHeaders();
+    console.log('Request Headers:', headers);
+    return this.http.get(url, { headers });
   }
 
-  // Delete a Raffle
-  async deleteRaffle(id: string) {
-    try {
-      const response = await axios.delete(`${this.apiUrl}/raffles/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error deleting raffle:', error);
-      throw error;
-    }
+  // Get Recent Raffles
+  getRecentRaffles(): Observable<any> {
+    const url = `${this.baseUrl}/raffles/recent`;
+    const headers = this.getHeaders();
+    return this.http.get(url, { headers });
   }
 
-  // Fetch a single raffle
-  async getRaffle(id: string) {
-    try {
-      const response = await axios.get(`${this.apiUrl}/raffles/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching raffle:', error);
-      throw error;
-    }
+  // Fetch Raffle by ID
+  getRaffleById(raffleId: string): Observable<any> {
+    const url = `${this.baseUrl}/raffles/${raffleId}`;
+    const headers = this.getHeaders();
+    return this.http.get(url, { headers });
   }
 
-  // Fetch recent activity
-  async getRecentActivity() {
-    try {
-      const response = await axios.get(`${this.apiUrl}/raffles/recent`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching recent activity:', error);
-      throw error;
-    }
+  // Update Raffle
+  updateRaffle(raffleId: string, raffleData: any): Observable<any> {
+    const url = `${this.baseUrl}/raffles/${raffleId}`;
+    const headers = this.getHeaders();
+    return this.http.put(url, raffleData, { headers });
   }
+
+  // Delete Raffle
+  deleteRaffle(raffleId: string): Observable<any> {
+    const url = `${this.baseUrl}/raffles/${raffleId}`;
+    const headers = this.getHeaders();
+    return this.http.delete(url, { headers });
+  }
+
 }
